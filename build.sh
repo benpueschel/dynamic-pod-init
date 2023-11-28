@@ -4,7 +4,7 @@
 
 IMAGE_NAME=${1:-"ben/dynamic-pod-init"}
 
-CGO_ENABLED=0 GOOS=linux go build -o main && \
+CGO_ENABLED=0 GOOS=linux go build -ldflags '-s' -o main && \
 chmod +x main
 
 docker build -t $IMAGE_NAME .
