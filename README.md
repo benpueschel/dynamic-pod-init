@@ -27,7 +27,7 @@ spec:
     emptyDir: {}
   initContainers:
   - name: dynamic-pod-init
-    image: ben/dynamic-pod-init
+    image: ghcr.io/benpueschel/dynamic-pod-init:main
     volumeMounts:
     - name: template-storage
       mountPath: /template
