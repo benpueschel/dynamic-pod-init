@@ -15,7 +15,7 @@ import (
 )
 
 func ApplyPatches(patchUrls string, targetDir string) {
-	patches := strings.Split(patchUrls, ",")
+	patches := strings.Split(patchUrls, " ")
 
 	for _, patch := range patches {
 		fmt.Printf("applying patch %s\n", patch)
@@ -63,7 +63,7 @@ func extractArchive(ctx context.Context, reader io.Reader) error {
 
 	if ex, ok := format.(archiver.Extractor); ok {
 		bReader, err := byteReader(archive) // we need to convert the reader to a byte reader because zip is weird, see
-											// https://pkg.go.dev/github.com/mholt/archiver/v4#Zip.Extract for more info
+		// https://pkg.go.dev/github.com/mholt/archiver/v4#Zip.Extract for more info
 		if err != nil {
 			return err
 		}
@@ -76,6 +76,10 @@ func extractArchive(ctx context.Context, reader io.Reader) error {
 }
 
 func extractFile(ctx context.Context, f archiver.File) error {
+	if f.IsDir() {
+		return nil
+	}
+
 	archiveFile, err := f.Open()
 	if err != nil {
 		return err
