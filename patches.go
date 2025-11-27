@@ -11,13 +11,13 @@ import (
 	"path"
 	"strings"
 
-	"github.com/mholt/archiver/v4"
+	"github.com/mholt/archives"
 )
 
 func ApplyPatches(patchUrls string, targetDir string) {
-	patches := strings.Split(patchUrls, " ")
+	patches := strings.SplitSeq(patchUrls, " ")
 
-	for _, patch := range patches {
+	for patch := range patches {
 		fmt.Printf("applying patch %s\n", patch)
 
 		// get archive from url
@@ -29,7 +29,7 @@ func ApplyPatches(patchUrls string, targetDir string) {
 		defer response.Body.Close()
 
 		// identify the archive format
-		format, archive, err := archiver.Identify("", response.Body)
+		format, archive, err := archives.Identify(context.Background(), "", response.Body)
 		if err != nil {
 			fmt.Printf("error: %s\n", err)
 			continue
@@ -38,7 +38,7 @@ func ApplyPatches(patchUrls string, targetDir string) {
 		ctx := context.WithValue(context.Background(), "targetDir", targetDir)
 
 		// decompress if needed
-		if decom, ok := format.(archiver.Decompressor); ok {
+		if decom, ok := format.(archives.Decompressor); ok {
 			rc, err := decom.OpenReader(archive)
 			if err != nil {
 				fmt.Printf("error: %s\n", err)
@@ -56,18 +56,18 @@ func ApplyPatches(patchUrls string, targetDir string) {
 }
 
 func extractArchive(ctx context.Context, reader io.Reader) error {
-	format, archive, err := archiver.Identify("", reader)
+	format, archive, err := archives.Identify(ctx, "", reader)
 	if err != nil {
 		return err
 	}
 
-	if ex, ok := format.(archiver.Extractor); ok {
+	if ex, ok := format.(archives.Extractor); ok {
 		bReader, err := byteReader(archive) // we need to convert the reader to a byte reader because zip is weird, see
 		// https://pkg.go.dev/github.com/mholt/archiver/v4#Zip.Extract for more info
 		if err != nil {
 			return err
 		}
-		err = ex.Extract(ctx, bReader, nil, extractFile)
+		err = ex.Extract(ctx, bReader, extractFile)
 		if err != nil {
 			return err
 		}
@@ -75,7 +75,7 @@ func extractArchive(ctx context.Context, reader io.Reader) error {
 	return nil
 }
 
-func extractFile(ctx context.Context, f archiver.File) error {
+func extractFile(ctx context.Context, f archives.FileInfo) error {
 	if f.IsDir() {
 		return nil
 	}
