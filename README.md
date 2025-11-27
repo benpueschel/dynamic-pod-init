@@ -5,7 +5,7 @@ A small helper container to initialize dynamic pods.
 ## Usage
 The container uses the following environment variables:
 
-- `TARGET_DIR` : the target directory to extract files to. Defaults to `/`
+- `TARGET_DIR` : the target directory to extract files to. Defaults to `./`
 - `TEMPLATE_DIR` : template directory whose contents will be copied to `TARGET_DIR`. Ignored if empty
 - `PATCHES` : a space-separated list of archive-file urls. These archives will be extracted to `TARGET_DIR`. Ignored if empty
 
