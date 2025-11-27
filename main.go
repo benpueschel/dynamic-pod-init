@@ -16,7 +16,7 @@ func getenv(key, fallback string) string {
 func main() {
 	log.SetFlags(0)
 
-	targetDir := getenv("TARGET_DIR", "/")
+	targetDir := getenv("TARGET_DIR", "./")
 	templateDir := os.Getenv("TEMPLATE_DIR")
 	patches := os.Getenv("PATCHES")
 
