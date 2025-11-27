@@ -62,8 +62,9 @@ func extractArchive(ctx context.Context, reader io.Reader) error {
 	}
 
 	if ex, ok := format.(archives.Extractor); ok {
-		bReader, err := byteReader(archive) // we need to convert the reader to a byte reader because zip is weird, see
-		// https://pkg.go.dev/github.com/mholt/archiver/v4#Zip.Extract for more info
+		// we need to convert the reader to a byte reader because zip is weird, see
+		// https://pkg.go.dev/github.com/mholt/archives#Zip.Extract for more info
+		bReader, err := byteReader(archive)
 		if err != nil {
 			return err
 		}
